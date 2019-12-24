@@ -18,6 +18,7 @@ public class Expense {
  private Long id;
  private Instant date;
  private String description;
+ private String location;
 
  @ManyToOne
     private User user;
