@@ -35,7 +35,7 @@ public class ExpenseController {
         return new ResponseController<>(HttpStatus.OK, "expense retrieved", expense);
     }
 
-    @PostMapping("/expense")
+    @PostMapping("/expenses")
     public ResponseController<Expense> createExpense(@RequestBody Expense expense){
         expenseRepo.save(expense);
         return new ResponseController<>(HttpStatus.OK, "expense created", expense);

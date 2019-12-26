@@ -9,7 +9,7 @@ import Moment from 'react-moment';
 class Expense extends Component{
 
     emptyItem = {
-        id: 15,
+        id: 14,
         expensedate: new Date(),
         description: '',
         location: '',
@@ -18,6 +18,7 @@ class Expense extends Component{
             name: 'Rent'
         }
     }
+
     constructor(props){
         super(props);
         this.state={
@@ -27,55 +28,72 @@ class Expense extends Component{
             date: new Date(),
             item: this.emptyItem
         }
+        this.handleSubmit = this.handleSubmit.bind(this);
     }
 
-        async componentDidMount(){
-           const response = await fetch('/api/categories');
-           const body = await response.json();
-           this.setState({categories: body.data, isLoading: false});
+    async componentDidMount(){
+        const response = await fetch('/api/categories');
+        const body = await response.json();
+        this.setState({categories: body.data,  isLoading: false});
 
-           const responseExp = await fetch('/api/expenses');
-           const bodyExp = await responseExp.json();
-           this.setState({expenses: bodyExp.data, isLoading: false});
-        }
+        const responseExp = await fetch('/api/expenses');
+        const bodyExp = await responseExp.json();
+        this.setState({expenses: bodyExp.data, isLoading: false});
+    }
 
-        handleChange = event => {
-          const value = event.target.value;
-          const name = event.target.name;
-          let {item} = {...this.state};
-          item[name] = value;
-          this.setState({item});
-        }
+    handleChange = event => {
+        const value = event.target.value;
+        const name = event.target.name;
+        let {item} = {...this.state};
+        item[name] = value;
+        this.setState({item});
+    }
 
-        handleDateChange = date =>{
-          let {item} = {...this.state};
-          item.expensedate = date;
-          this.setState({item});
-        }
+    handleDateChange = date =>{
+        let {item} = {...this.state};
+        item.expensedate = date;
+        this.setState({item});
+    }
 
-        handleDelete = async (id) =>{
-           await fetch(`/api/expenses/${id}`, {
-               method: 'DELETE',
-               headers: {
-                   'Accept': 'application/json',
-                   'Content-Type': 'application/json'
-               }
+    handleDelete = async (id) =>{
+        await fetch(`/api/expenses/${id}`, {
+            method: 'DELETE',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
 
-           }).then(() =>{
-               const expenses = [...this.state.expenses].filter(expense => expense.id !== id);
-               this.setState({expenses});
-           })
+        }).then(() =>{
+            const expenses = [...this.state.expenses].filter(expense => expense.id !== id);
+            this.setState({expenses});
+        })
+
+    }
+
+    //     handleSubmit = async (event) =>{
+    //
+    //     const item = this.state.item;
+    //     await fetch(`/api/expenses`, {
+    //         method: 'POST',
+    //         headers: {
+    //             'Accept' : 'application/json',
+    //             'Content-Type': 'application/json'
+    //         },
+    //         body: JSON.stringify(item),
+    //     });
+    //
+    //         event.preventDefault();
+    //     this.props.history.push("/expenses");
+    // };
+
+    async handleSubmit(event){
 
 
-
-        }
-
-        handleSubmit = async (event) =>{
-        const {item} = this.state;
-        await fetch('/api/expenses', {
+        const item = this.state.item;
+        await fetch(`/api/expenses`, {
             method: 'POST',
             headers: {
-                'Accept' : 'application/json',
+                'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(item),
@@ -83,14 +101,15 @@ class Expense extends Component{
 
         event.preventDefault();
         this.props.history.push("/expenses");
-    };
+    }
 
 
     render(){
-        const{categories} = this.state;
-        const { expenses, isLoading} = this.state;
+        // const{categories} = this.state;
+        const { expenses, categories, isLoading} = this.state;
+
         if(isLoading)
-            return <div> Fetching data ...</div>
+            return <div>Loading...</div>
 
         let options = categories.map(category => (
             <option key={category.id}>
@@ -106,9 +125,9 @@ class Expense extends Component{
                 <td>{expense.category.name}</td>
                 <td>
                     <Button size="sm" color="danger"
-                        onClick={() => this.handleDelete(expense.id)}
+                            onClick={() => this.handleDelete(expense.id)}
                     >
-                      Delete
+                        Delete
                     </Button>
                 </td>
             </tr>
@@ -123,7 +142,7 @@ class Expense extends Component{
                         <FormGroup>
                             <Label for="title">Title</Label>
                             <Input type="text" name="description" id="description"
-                              onChange={this.handleChange}
+                                   onChange={this.handleChange} autoComplete="name"
                             />
                         </FormGroup>
 
@@ -135,10 +154,10 @@ class Expense extends Component{
                         </FormGroup>
 
                         <FormGroup>
-                          <Label for="date">Date</Label>
+                            <Label for="city">Date</Label>
                             <DatePicker id="date"
-                             selected={this.state.item.expensedate}
-                             onChange={this.handleDateChange}
+                                        selected={this.state.item.expensedate}
+                                        onChange={this.handleDateChange}
                             />
                         </FormGroup>
 
@@ -146,7 +165,7 @@ class Expense extends Component{
                             <FormGroup className="col-md-4 mb-3">
                                 <Label for="location">Location</Label>
                                 <Input type="text" name="location" id="location"
-                                 onChange={this.handleChange}
+                                       onChange={this.handleChange}
                                 />
                             </FormGroup>
                         </div>
@@ -163,16 +182,16 @@ class Expense extends Component{
                     <h3>Expense List</h3>
                     <Table>
                         <thead>
-                          <tr>
-                              <th width="20%">Description</th>
-                              <th width="10%">Location</th>
-                              <th width="10%">Date</th>
-                              <th width="15%">Category</th>
-                              <th width="10%">Action</th>
-                          </tr>
+                        <tr>
+                            <th width="20%">Description</th>
+                            <th width="10%">Location</th>
+                            <th width="10%">Date</th>
+                            <th width="15%">Category</th>
+                            <th width="10%">Action</th>
+                        </tr>
                         </thead>
                         <tbody>
-                           {rows}
+                        {rows}
                         </tbody>
                     </Table>
                 </Container>
@@ -182,3 +201,18 @@ class Expense extends Component{
 }
 
 export default Expense;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
